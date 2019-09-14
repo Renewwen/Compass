@@ -10,9 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 /**
@@ -21,9 +29,21 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 public class MainFragment extends Fragment implements OnMapReadyCallback {
     private MapView mapView;
     private View view;
+    private GoogleMap googleMap;
+    private LocationTracker locationTracker;
+    private ReportDialog dialog;
+
+    private FloatingActionButton fabReport;
+
+    private void showDialog(String label, String prefillText) {
+        int cx = (int) (fabReport.getX() + (fabReport.getWidth() / 2));
+        int cy = (int) (fabReport.getY()) + fabReport.getHeight() + 56;
+        dialog = ReportDialog.newInstance(getContext(), cx, cy);
+        dialog.show();
+    }
+
 
     public static MainFragment newInstance() {
-
         Bundle args = new Bundle();
 
         MainFragment fragment = new MainFragment();
@@ -48,11 +68,28 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mapView = (MapView) this.view.findViewById(R.id.event_map_view);
+
+        fabReport = (FloatingActionButton)view.findViewById(R.id.fab);
+        fabReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show dialog
+            }
+        });
+
         if (mapView != null) {
             mapView.onCreate(null);
             mapView.onResume();// needed to get the map to display immediately
             mapView.getMapAsync(this);
         }
+
+        fabReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show dialog
+                showDialog(null, null);
+            }
+        });
     }
 
     @Override
@@ -81,8 +118,38 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(getContext());
 
+        this.googleMap = googleMap;
+        this.googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        getActivity(), R.raw.style_json));
+
+        locationTracker = new LocationTracker(getActivity());
+        locationTracker.getLocation();
+
+        LatLng latLng = new LatLng(locationTracker.getLatitude(), locationTracker.getLongitude());
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latLng)      // Sets the center of the map to Mountain View
+                .zoom(16)// Sets the zoom
+                .bearing(90)           // Sets the orientation of the camera to east
+                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        MarkerOptions marker = new MarkerOptions().position(latLng).
+                title("You");
+
+        // Changing marker icon
+        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.boy));
+
+        // adding marker
+        googleMap.addMarker(marker);
     }
+
+
 
 }
 

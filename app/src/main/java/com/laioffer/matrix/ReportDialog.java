@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -47,6 +48,7 @@ public class ReportDialog extends Dialog {
         mImageCamera = (ImageView) dialogView.findViewById(R.id.event_camera_img);
         mBackButton = (Button) dialogView.findViewById(R.id.event_back_button);
         mSendButton = (Button) dialogView.findViewById(R.id.event_send_button);
+
         mCommentEditText = (EditText) dialogView.findViewById(R.id.event_comment);
         mEventTypeImg = (ImageView) dialogView.findViewById(R.id.event_type_img);
         mTypeTextView = (TextView) dialogView.findViewById(R.id.event_type);
@@ -57,6 +59,21 @@ public class ReportDialog extends Dialog {
                 mDialogCallBack.onSubmit(mCommentEditText.getText().toString(), mEventype);
             }
         });
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewSwitcher.showPrevious();
+            }
+        });
+
+        mImageCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialogCallBack.startCamera();
+            }
+        });
+
 
     }
 
@@ -174,6 +191,10 @@ public class ReportDialog extends Dialog {
             mTypeTextView.setText(mEventype);
             mEventTypeImg.setImageDrawable(ContextCompat.getDrawable(getContext(),Config.trafficMap.get(mEventype)));
         }
+    }
+
+    public void updateImage(Bitmap bitmap) {
+        mImageCamera.setImageBitmap(bitmap);
     }
 
 }

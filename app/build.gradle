@@ -46,6 +46,12 @@ dependencies {
     // storage
     implementation 'com.google.firebase:firebase-storage:17.0.0'
 
+    // message
+    implementation 'com.google.firebase:firebase-messaging:17.6.0'
+
+    // ads
+    implementation 'com.google.firebase:firebase-ads:17.0.0'
+
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

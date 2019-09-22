@@ -121,7 +121,6 @@ public class Utils {
      */
     public static Bitmap getBitmapFromURL(String imageUrl) {
         Bitmap bitmap = null;
-
         if (bitmap == null) {
             try {
                 URL url = new URL(imageUrl);
@@ -135,7 +134,6 @@ public class Utils {
                 Log.e("Error: ", e.getMessage().toString());
             }
         }
-
         return bitmap;
     }
 

@@ -34,6 +34,7 @@ public class ReportDialog extends Dialog {
 
     private ViewSwitcher mViewSwitcher;
     private String mEventype;
+    private String mPrefillText;
 
     //Event specs
     private ImageView mImageCamera;
@@ -90,12 +91,26 @@ public class ReportDialog extends Dialog {
         super(context, themeResId);
     }
 
-    public static ReportDialog newInstance(Context context, int cx, int cy, DialogCallBack dialogCallBack) {
+    public static ReportDialog newInstance(Context context, int cx, int cy, DialogCallBack dialogCallBack,
+                                           String event_type, String prefillText) {
         ReportDialog dialog = new ReportDialog(context, R.style.MyAlertDialogStyle);
         dialog.cx = cx;
         dialog.cy = cy;
         dialog.mDialogCallBack = dialogCallBack;
+        dialog.mEventype = event_type;
+        dialog.mPrefillText = prefillText;
         return dialog;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mEventype != null) {
+            showNextViewSwitcher(mEventype);
+        }
+        if (mPrefillText != null) {
+            mCommentEditText.setText(mPrefillText);
+        }
     }
 
 
